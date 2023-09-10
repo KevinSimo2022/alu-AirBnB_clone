@@ -1,10 +1,6 @@
 #!/usr/bin/python3
 import uuid
 from datetime import datetime
-from models.engine.file_storage import FileStorage
-
-storage = FileStorage()
-storage.reload()
 
 
 class BaseModel:
