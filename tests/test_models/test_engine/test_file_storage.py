@@ -3,7 +3,6 @@
 import unittest
 from models import storage
 from models.base_model import BaseModel
-from models.engine.file_storage import FileStorage
 import os
 import json
 
@@ -14,7 +13,7 @@ class TestFStorage(unittest.TestCase):
 
     def testClassInstance(self):
         """checking the instance"""
-        self.assertIsInstance(storage, FileStorage)
+        self.assertIsInstance(storage, storage.FileStorage)
 
     def testStoreBaseModel(self):
         """checking Testing and saving"""
@@ -57,8 +56,8 @@ class TestFStorage(unittest.TestCase):
 
     def testtheAttributes(self):
         """checking the atts"""
-        self.assertEqual(hasattr(FileStorage, '_FileStorage__file_path'), True)
-        self.assertEqual(hasattr(FileStorage, '_FileStorage__objects'), True)
+        self.assertEqual(hasattr(storage.FileStorage, '_FileStorage__file_path'), True)
+        self.assertEqual(hasattr(storage.FileStorage, '_FileStorage__objects'), True)
 
     def testsave(self):
         self.my_model.save()
@@ -70,8 +69,8 @@ class TestFStorage(unittest.TestCase):
         self.my_model.save()
         self.assertEqual(os.path.exists(storage._FileStorage__file_path), True)
         dobj = storage.all()
-        FileStorage._FileStorage__objects = {}
-        self.assertNotEqual(dobj, FileStorage._FileStorage__objects)
+        storage._FileStorage__objects = {}
+        self.assertNotEqual(dobj, storage._FileStorage__objects)
         storage.reload()
         for key, value in storage.all().items():
             self.assertEqual(dobj[key].to_dict(), value.to_dict())
@@ -80,7 +79,7 @@ class TestFStorage(unittest.TestCase):
         """checking self"""
         msg = "save() takes 1 positional argument but 2 were given"
         with self.assertRaises(TypeError) as e:
-            FileStorage.save(self, 100)
+            storage.save(self, 100)
 
         self.assertEqual(str(e.exception), msg)
 
