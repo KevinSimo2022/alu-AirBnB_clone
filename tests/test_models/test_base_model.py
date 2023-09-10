@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-"""Unittest module to test the base_model"""
+"""Unittest module to test base_model"""
 import os
 import unittest
 from datetime import datetime
@@ -7,7 +7,7 @@ from models.base_model import BaseModel
 
 
 class TestBaseModel_instantiation(unittest.TestCase):
-    """Unittests for testing BaseModel's instantiation"""
+    """Unittests for testing BaseModel instantiation"""
 
     def test_no_args(self):
         self.assertEqual(BaseModel, type(BaseModel()))
@@ -37,42 +37,42 @@ class TestBaseModel_instantiation(unittest.TestCase):
         self.assertLess(inst1.updated_at, inst2.updated_at)
 
     def test_str_method(self):
-        d-t = datetime.today()
-        d-t_repr = repr(dt)
+        dt = datetime.today()
+        dt_repr = repr(dt)
         bm = BaseModel()
         bm.id = "9876543210"
-        bm.created_at = bm.updated_at = d-t
+        bm.created_at = bm.updated_at = dt
         str_bm = bm.__str__()
         self.assertIn("[BaseModel] (9876543210)", str_bm)
-        self.assertIn("'created_at': " + d-t_repr, str_bm)
-        self.assertIn("'updated_at': " + d-t_repr, str_bm)
+        self.assertIn("'created_at': " + dt_repr, str_bm)
+        self.assertIn("'updated_at': " + dt_repr, str_bm)
 
     def test_instantiation_with_None_args(self):
         inst = BaseModel(None)
         self.assertNotIn(None, inst.__dict__.values())
 
     def test_instantiation_with_kwargs(self):
-        d-t = datetime.today()
-        d-t_iso = dt.isoformat()
-        inst = BaseModel(id="091", created_at=d-t_iso, updated_at=d-t_iso)
+        dt = datetime.today()
+        dt_iso = dt.isoformat()
+        inst = BaseModel(id="091", created_at=dt_iso, updated_at=dt_iso)
         self.assertEqual(inst.id, "091")
-        self.assertEqual(inst.created_at, d-t)
-        self.assertEqual(inst.updated_at, d-t)
+        self.assertEqual(inst.created_at, dt)
+        self.assertEqual(inst.updated_at, dt)
 
     def test_instantiation_with_None_kwargs(self):
         with self.assertRaises(TypeError):
             BaseModel(id=None, created_at=None, updated_at=None)
 
     def test_instantiation_with_args_and_kwargs(self):
-        d-t = datetime.today()
-        d-t_iso = dt.isoformat()
+        dt = datetime.today()
+        dt_iso = dt.isoformat()
         inst = BaseModel(
-                "12", id="71425908", created_at=d-t_iso,
-                updated_at=d-t_iso
+                "12", id="71425908", created_at=dt_iso,
+                updated_at=dt_iso
         )
         self.assertEqual(inst.id, "71425908")
-        self.assertEqual(inst.created_at, d-t)
-        self.assertEqual(inst.updated_at, d-t)
+        self.assertEqual(inst.created_at, dt)
+        self.assertEqual(inst.updated_at, dt)
 
     def test_save(self):
         ans = BaseModel()
