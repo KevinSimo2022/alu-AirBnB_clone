@@ -2,12 +2,6 @@
 import os
 import json
 from models.base_model import BaseModel
-from models.user import User
-from models.place import Place
-from models.state import State
-from models.city import City
-from models.review import Review
-from models.amenity import Amenity
 
 
 class FileStorage:
@@ -15,13 +9,16 @@ class FileStorage:
     __objects = {}
 
     def all(self):
+        """Return the dictionary of objects."""
         return self.__objects
 
     def new(self, obj):
+        """Add an object to the current database."""
         key = f"{obj.__class__.__name__}.{obj.id}"
         self.__objects[key] = obj
 
     def save(self):
+        """Serialize __objects to JSON file."""
         new_dict = {}
         for key, obj in self.__objects.items():
             new_dict[key] = obj.to_dict()
@@ -29,6 +26,7 @@ class FileStorage:
             json.dump(new_dict, file)
 
     def reload(self):
+        """Deserialize JSON file to __objects."""
         try:
             with open(self.__file_path, mode="r", encoding="UTF-8") as f:
                 new_obj_dict = json.load(f)
