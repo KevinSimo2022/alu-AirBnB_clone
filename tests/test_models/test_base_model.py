@@ -36,6 +36,22 @@ class TestBaseModel_instantiation(unittest.TestCase):
         inst2 = BaseModel()
         self.assertLess(inst1.updated_at, inst2.updated_at)
 
+    def test_to_dict_method(self):
+    """Test the to_dict() method of BaseModel."""
+    bm = BaseModel()
+    bm.id = "12345"
+    bm.created_at = bm.updated_at = datetime(2023, 1, 1, 0, 0, 0)
+    
+    expected_dict = {
+        '__class__': 'BaseModel',
+        'id': '12345',
+        'created_at': '2023-01-01T00:00:00',
+        'updated_at': '2023-01-01T00:00:00'
+    }
+
+    self.assertEqual(bm.to_dict(), expected_dict)
+
+
     def test_str_method(self):
         dt = datetime.today()
         dt_repr = repr(dt)
