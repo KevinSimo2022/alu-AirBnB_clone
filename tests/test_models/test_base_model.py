@@ -76,6 +76,6 @@ class TestBaseModel_instantiation(unittest.TestCase):
 
     def test_save(self):
         ans = BaseModel()
-        self.assertFalse(hasattr(ans, 'updated_at'))
+        initial_updated_at = ans.updated_at
         ans.save()
-        self.assertTrue(hasattr(ans, 'updated_at'))
+        self.assertNotEqual(initial_updated_at, ans.updated_at)
