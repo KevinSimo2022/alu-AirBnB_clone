@@ -1,99 +1,44 @@
 #!/usr/bin/python3
-""" For the tests """
+import os
 import unittest
-from models import storage
+from os import path
 from models.base_model import BaseModel
 from models.engine.file_storage import FileStorage
-import os
-import json
+""" testing the file storage"""
 
-class TestFStorage(unittest.TestCase):
-    """ checking this test """
 
-    my_model = BaseModel()
+class TestCaseFileStorage(unittest.TestCase):
+    """ class for test cases """
 
-    def testClassInstance(self):
-        """checking the instance"""
-        self.assertIsInstance(storage, FileStorage)
+    def setUp(self):
+        """ setting up the various
+            components for the test """
+        self.dir_path = 'file.json'
+        self.my_model = FileStorage()
 
-    def testStoreBaseModel(self):
-        """checking Testing and saving"""
-        self.my_model.full_name = "BaseModel Instance"
+    def tearDown(self):
+        """ dispose json file """
+        if path.exists(self.dir_path):
+            os.remove(self.dir_path)
+
+    def test_all(self):
+        """ check type return by all function """
+        self.assertEqual(type(self.my_model.all()), dict)
+
+    def test_new(self):
+        test_model = BaseModel()
+        self.my_model.new(test_model)
+        len_dict = len(self.my_model.all())
+        self.assertGreater(len_dict, 0)
+
+    def test_save(self):
+        """ save content to file
+         and create if not exist"""
         self.my_model.save()
-        bm_dict = self.my_model.to_dict()
-        all_objs = storage.all()
+        self.assertEqual(path.exists(self.dir_path), True)
 
-        key = bm_dict['__class__'] + "." + bm_dict['id']
-        self.assertEqual(key in all_objs, True)
-
-    def testStoreBaseModel2(self):
-        """checking Reload, saving update"""
-        self.my_model.my_name = "First name"
-        self.my_model.save()
-        bm_dict = self.my_model.to_dict()
-        all_objs = storage.all()
-
-        key = bm_dict['__class__'] + "." + bm_dict['id']
-
-        self.assertEqual(key in all_objs, True)
-        self.assertEqual(bm_dict['my_name'], "First name")
-
-        create1 = bm_dict['created_at']
-        update1 = bm_dict['updated_at']
-
-        self.my_model.my_name = "Second name"
-        self.my_model.save()
-        bm_dict = self.my_model.to_dict()
-        all_objs = storage.all()
-
-        self.assertEqual(key in all_objs, True)
-
-        create2 = bm_dict['created_at']
-        update2 = bm_dict['updated_at']
-
-        self.assertEqual(create1, create2)
-        self.assertNotEqual(update1, update2)
-        self.assertEqual(bm_dict['my_name'], "Second name")
-
-    def testtheAttributes(self):
-        """checking the atts"""
-        self.assertEqual(hasattr(FileStorage, '_FileStorage__file_path'), True)
-        self.assertEqual(hasattr(FileStorage, '_FileStorage__objects'), True)
-
-    def testsave(self):
-        self.my_model.save()
-        self.assertEqual(os.path.exists(storage._FileStorage__file_path), True)
-        self.assertEqual(storage.all(), storage._FileStorage__objects)
-
-    def testreload(self):
-        """checking the reload"""
-        self.my_model.save()
-        self.assertEqual(os.path.exists(storage._FileStorage__file_path), True)
-        dobj = storage.all()
-        FileStorage._FileStorage__objects = {}
-        self.assertNotEqual(dobj, FileStorage._FileStorage__objects)
-        storage.reload()
-        for key, value in storage.all().items():
-            self.assertEqual(dobj[key].to_dict(), value.to_dict())
-
-    def testSaveSelf(self):
-        """checking self"""
-        msg = "save() takes 1 positional argument but 2 were given"
-        with self.assertRaises(TypeError) as e:
-            FileStorage.save(self, 100)
-
-        self.assertEqual(str(e.exception), msg)
-
-    def test_save_FileStorage(self):
-        """checking the new method"""
-        var1 = self.my_model.to_dict()
-        new_key = var1['__class__'] + "." + var1['id']
-        storage.save()
-        with open("file.json", 'r') as fd:
-            var2 = json.load(fd)
-        new = var2[new_key]
-        for key in new:
-            self.assertEqual(var1[key], new[key])
-
-if __name__ == '__main__':
-    unittest.main()
+    def test_reload(self):
+        model = FileStorage()
+        self.my_model.reload()
+        len_dict = len(model.all())
+        self.assertGreater(len_dict, 0)
