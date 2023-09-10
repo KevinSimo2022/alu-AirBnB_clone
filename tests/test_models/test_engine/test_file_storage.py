@@ -14,7 +14,7 @@ class TestFStorage(unittest.TestCase):
 
     def testClassInstance(self):
         """checking the instance"""
-        self.assertIsInstance(storage, storage.FileStorage)
+        self.assertIsInstance(storage.FileStorage, FileStorage)
 
     def testStoreBaseModel(self):
         """checking Testing and saving"""
@@ -62,16 +62,16 @@ class TestFStorage(unittest.TestCase):
 
     def testsave(self):
         self.my_model.save()
-        self.assertEqual(os.path.exists(storage._FileStorage__file_path), True)
-        self.assertEqual(storage.all(), storage._FileStorage__objects)
+        self.assertEqual(os.path.exists(storage.FileStorage._FileStorage__file_path), True)
+        self.assertEqual(storage.all(), storage.FileStorage._FileStorage__objects)
 
     def testreload(self):
         """checking the reload"""
         self.my_model.save()
-        self.assertEqual(os.path.exists(storage._FileStorage__file_path), True)
+        self.assertEqual(os.path.exists(storage.FileStorage._FileStorage__file_path), True)
         dobj = storage.all()
-        storage._FileStorage__objects = {}
-        self.assertNotEqual(dobj, storage._FileStorage__objects)
+        storage.FileStorage._FileStorage__objects = {}
+        self.assertNotEqual(dobj, storage.FileStorage._FileStorage__objects)
         storage.reload()
         for key, value in storage.all().items():
             self.assertEqual(dobj[key].to_dict(), value.to_dict())
@@ -79,9 +79,9 @@ class TestFStorage(unittest.TestCase):
     def testSaveSelf(self):
         """checking self"""
         msg = "save() takes 1 positional argument but 2 were given"
+        file_storage = storage.FileStorage()
         with self.assertRaises(TypeError) as e:
-            storage.save(self, 100)
-
+            file_storage.save(self, 100)
         self.assertEqual(str(e.exception), msg)
 
     def test_save_FileStorage(self):
