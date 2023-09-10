@@ -1,32 +1,40 @@
 #!/usr/bin/python3
+"""The BaseModel file"""
+
 import uuid
 from datetime import datetime
+import models
 
 
 class BaseModel:
-    def __init__(self, *args, **kwargs):
-        if kwargs:
+    """contains common attribute"""
+    def __init__(self, *arg, **kwargs):
+        if kwargs.__len__() > 0:
             for key, value in kwargs.items():
                 if key == 'created_at' or key == 'updated_at':
-                    setattr(self, key, datetime.strptime(value,
-                                                        "%Y-%m-%dT%H:%M:%S.%f"))
-                else:
+                    value = datetime.fromisoformat(value)
+                    setattr(self, key, value)
+                    continue
+                if key != '__class__':
                     setattr(self, key, value)
         else:
             self.id = str(uuid.uuid4())
             self.created_at = datetime.now()
             self.updated_at = datetime.now()
+            models.storage.new(self)
 
     def __str__(self):
-        return "[{}] ({}) {}".format(self.__class__.__name__,
-                                      self.id, self.__dict__)
+        class_name = "[" + self.__class__.__name__ + "]"
+        lst = {k: v for (k, v) in self.__dict__.items() if (not v) is False}
+        return class_name + " (" + self.id + ") " + str(lst)
 
     def save(self):
         self.updated_at = datetime.now()
+        models.storage.save()
 
     def to_dict(self):
-        obj_dict = self.__dict__.copy()
-        obj_dict['__class__'] = self.__class__.__name__
-        obj_dict['created_at'] = self.created_at.isoformat()
-        obj_dict['updated_at'] = self.updated_at.isoformat()
-        return obj_dict
+        data = self.__dict__.copy()
+        data['__class__'] = self.__class__.__name__
+        data['created_at'] = self.created_at.isoformat()
+        data['updated_at'] = self.updated_at.isoformat()
+        return data
