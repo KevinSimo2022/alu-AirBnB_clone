@@ -28,7 +28,7 @@ class BaseModel:
         obj_dict['updated_at'] = self.updated_at.isoformat()
         return obj_dict
 
- def from_dict(cls, obj_dict):
+    def from_dict(cls, obj_dict):
         if '__class__' in obj_dict:
             class_name = obj_dict.pop('__class__')
             if class_name == cls.__name__:
