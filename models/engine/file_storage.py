@@ -1,57 +1,68 @@
 #!/usr/bin/python3
+"""Defines FileStorage class."""
+import os
 import json
-from os import path
+from models.base_model import BaseModel
+from models.user import User
+from models.state import State
+from models.city import City
+from models.place import Place
+from models.amenity import Amenity
+from models.review import Review
 
 
 class FileStorage:
-    """ file storage class"""
-
+    __file_path = 'file.json'
     __file_path = "file.json"
     __objects = {}
 
     def all(self):
-        """ returns : dictionary """
+        """Return dictionary __objects."""
+        """Return the dictionary of objects."""
         return self.__objects
 
     def new(self, obj):
-        """ set object with key """
-        self.__objects[obj.__class__.__name__ + '.' + obj.id] = obj
+        """Set in __objects obj with the  key <obj_class_name>.id"""
+        key = '{}.{}'.format(obj.__class__.__name__, obj.id)
+        """Add an object to the current database."""
+        key = f"{obj.__class__.__name__}.{obj.id}"
+        self.__objects[key] = obj
 
     def save(self):
-        """ serializes to json file """
-        temp = {}
-        for key in self.__objects:
-            temp[key] = self.__objects[key].to_dict()
-        with open(self.__file_path, "w+", encoding='utf-8') as out_file:
-            json.dump(temp, out_file)
+        """Serialize __objects to JSON file __file_path."""
+        object_dict = {}
+        for obj in self.__objects:
+            object_dict[obj] = self.__objects[obj].to_dict()
+        with open(self.__file_path, 'w') as file:
+            json.dump(object_dict, file)
 
+        """Serialize __objects to JSON file."""
+        new_dict = {}
+        for key, obj in self.__objects.items():
+            new_dict[key] = obj.to_dict()
+        with open(self.__file_path, mode="w", encoding="UTF-8") as file:
+            json.dump(new_dict, file)
     def reload(self):
-    """ deserializes JSON from the file """
-    from models.base_model import BaseModel
-    from models.user import User
-    from models.city import City
-    from models.state import State
-    from models.place import Place
-    from models.review import Review
-    from models.amenity import Amenity
-    
-    class_mapping = {
-        'BaseModel': BaseModel,
-        'User': User,
-        'City': City,
-        'State': State,
-        'Place': Place,
-        'Review': Review,
-        'Amenity': Amenity
-    }
-    
-    if path.exists(self.__file_path):
-        with open(self.__file_path, "r", encoding='utf-8') as in_file:
-            dataset = json.load(in_file)
-            for data in dataset.values():
-                class_name = data.get('__class__')
-                if class_name in class_mapping:
-                    class_instance = class_mapping[class_name](**data)
-                    self.new(class_instance)
-                else:
-                    print(f"Warning: Unknown class '{class_name}' in JSON data.")
+        from models.base_model import BaseModel
+        from models.user import User
+        from models.state import State
+        from models.city import City
+        from models.place import Place
+        from models.amenity import Amenity
+        from models.review import Review
+
+        """Deserialize JSON file to __objects."""
+        try:
+            with open(self.__file_path) as file:
+                serialized_content = json.load(file)
+                for item in serialized_content.values():
+                    class_name = item['__class__']
+                    self.new(eval(class_name + "(**" + str(item) + ")"))
+            with open(self.__file_path, mode="r", encoding="UTF-8") as f:
+                new_obj_dict = json.load(f)
+                for key, value in new_obj_dict.items():
+                    class_name = value['__class__']
+                    new_instance = eval(class_name)(**value)
+                    self.__objects[key] = new_instance
+        except FileNotFoundError:
+            pass
