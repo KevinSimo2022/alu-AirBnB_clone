@@ -23,11 +23,12 @@ class BaseModel:
 
     def to_dict(self):
         obj_dict = self.__dict__.copy()
-        obj_dict['__class__'] = self.__class__.__name__  # Store the class name as a reference
+        obj_dict['__class__'] = self.__class__.__name__
         obj_dict['created_at'] = self.created_at.isoformat()
         obj_dict['updated_at'] = self.updated_at.isoformat()
         return obj_dict
 
+    @classmethod
     def from_dict(cls, obj_dict):
         if '__class__' in obj_dict:
             class_name = obj_dict.pop('__class__')
@@ -35,6 +36,7 @@ class BaseModel:
                 obj_dict['created_at'] = datetime.fromisoformat(obj_dict['created_at'])
                 obj_dict['updated_at'] = datetime.fromisoformat(obj_dict['updated_at'])
                 instance = cls()
+                instance.__class__ = cls  # Set the class to the correct class type
                 for key, value in obj_dict.items():
                     setattr(instance, key, value)
                 return instance
