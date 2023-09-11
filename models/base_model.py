@@ -27,3 +27,13 @@ class BaseModel:
         obj_dict['created_at'] = self.created_at.isoformat()
         obj_dict['updated_at'] = self.updated_at.isoformat()
         return obj_dict
+
+    @classmethod
+    def from_dict(cls, obj_dict):
+        if '__class__' in obj_dict:
+            class_name = obj_dict.pop('__class__')
+            if class_name == cls.__name__:
+                obj_dict['created_at'] = datetime.fromisoformat(obj_dict['created_at'])
+                obj_dict['updated_at'] = datetime.fromisoformat(obj_dict['updated_at'])
+                return cls(**obj_dict)
+        raise ValueError("Invalid or mismatched class name in dictionary representation")
