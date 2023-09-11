@@ -26,17 +26,32 @@ class FileStorage:
             json.dump(temp, out_file)
 
     def reload(self):
-        """ deserializes json to file """
-        from models.base_model import BaseModel
-        from models.user import User
-        from models.city import City
-        from models.state import State
-        from models.place import Place
-        from models.review import Review
-        from models.amenity import Amenity
-        if path.exists(self.__file_path):
-            with open(self.__file_path, "r", encoding='utf-8') as in_file:
-                dataset = json.load(in_file)
-                for data in dataset.values():
-                    name_of_class = data['__class__']
-                    self.new(eval(name_of_class + "(**" + str(data) + ")"))
+    """ deserializes JSON from the file """
+    from models.base_model import BaseModel
+    from models.user import User
+    from models.city import City
+    from models.state import State
+    from models.place import Place
+    from models.review import Review
+    from models.amenity import Amenity
+    
+    class_mapping = {
+        'BaseModel': BaseModel,
+        'User': User,
+        'City': City,
+        'State': State,
+        'Place': Place,
+        'Review': Review,
+        'Amenity': Amenity
+    }
+    
+    if path.exists(self.__file_path):
+        with open(self.__file_path, "r", encoding='utf-8') as in_file:
+            dataset = json.load(in_file)
+            for data in dataset.values():
+                class_name = data.get('__class__')
+                if class_name in class_mapping:
+                    class_instance = class_mapping[class_name](**data)
+                    self.new(class_instance)
+                else:
+                    print(f"Warning: Unknown class '{class_name}' in JSON data.")
