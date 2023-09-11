@@ -1,43 +1,63 @@
 #!/usr/bin/python3
-import uuid
+"""Defines BaseModel class."""
+import models
+from uuid import uuid4
 from datetime import datetime
 
+
 class BaseModel:
+    """
+        Class Base
+        Defines all common attributes/methods for other classes
+        Attr :
+                id: string - assigned with an uuid when an instance is created
+                created_at: datetime - assigned with the current datetime
+                when an instance is created
+
+                updated_at: datetime - assigned with the current datetime
+                when an instance is created.
+                It will be updated every time the object change.
+    """
+
     def __init__(self, *args, **kwargs):
-        if kwargs:
-            for key, value in kwargs.items():
-                if key == 'created_at' or key == 'updated_at':
-                    setattr(self, key, datetime.strptime(value, "%Y-%m-%dT%H:%M:%S.%f"))
-                else:
-                    setattr(self, key, value)
-        else:
-            self.id = str(uuid.uuid4())
-            self.created_at = datetime.now()
-            self.updated_at = datetime.now()
+        """Initialize new BaseModel."""
 
-    def __str__(self):
-        return "[{}] ({}) {}".format(self.__class__.__name__, self.id, self.__dict__)
+        tform = "%Y-%m-%dT%H:%M:%S.%f"
 
-    def save(self):
+        self.id = str(uuid4())
+        self.created_at = datetime.now()
         self.updated_at = datetime.now()
 
-    def to_dict(self):
-        obj_dict = self.__dict__.copy()
-        obj_dict['__class__'] = self.__class__.__name__
-        obj_dict['created_at'] = self.created_at.isoformat()
-        obj_dict['updated_at'] = self.updated_at.isoformat()
-        return obj_dict
+        if kwargs:
+            kwargs["created_at"] = datetime.strptime(
+                kwargs["created_at"], tform)
+            kwargs["updated_at"] = datetime.strptime(
+                kwargs["updated_at"], tform)
+            del kwargs["__class__"]
+            self.__dict__.update(kwargs)
+        else:
+            self.id = str(uuid4())
+            self.created_at = datetime.now()
+            self.updated_at = datetime.now()
+            models.storage.new(self)
 
-    @classmethod
-    def from_dict(cls, obj_dict):
-        if '__class__' in obj_dict:
-            class_name = obj_dict.pop('__class__')
-            if class_name == cls.__name__:
-                obj_dict['created_at'] = datetime.fromisoformat(obj_dict['created_at'])
-                obj_dict['updated_at'] = datetime.fromisoformat(obj_dict['updated_at'])
-                instance = cls()
-                instance.__class__ = cls  # Set the class to the correct class type
-                for key, value in obj_dict.items():
-                    setattr(instance, key, value)
-                return instance
-        raise ValueError("Invalid or mismatched class name in dictionary representation")
+    def save(self):
+        """Set updated_at with current datetime."""
+        self.updated_at = datetime.now()
+        models.storage.save()
+
+    def to_dict(self):
+        """Return dictionary of BaseModel instance.
+
+        Includes key/value pair __class__.
+        """
+        rdict = self.__dict__.copy()
+        rdict["created_at"] = self.created_at.isoformat()
+        rdict["updated_at"] = self.updated_at.isoformat()
+        rdict["__class__"] = self.__class__.__name__
+        return rdict
+
+    def __str__(self):
+        """Return print/str representation of BaseModel instance."""
+        clname = self.__class__.__name__
+        return "[{}] ({}) {}".format(clname, self.id, self.__dict__)
