@@ -43,14 +43,6 @@ class FileStorage:
         with open(self.__file_path, mode="w", encoding="UTF-8") as file:
             json.dump(new_dict, file)
     def reload(self):
-        from models.base_model import BaseModel
-        from models.user import User
-        from models.state import State
-        from models.city import City
-        from models.place import Place
-        from models.amenity import Amenity
-        from models.review import Review
-
         """Deserialize JSON file to __objects."""
         try:
             with open(self.__file_path) as file:
@@ -58,11 +50,5 @@ class FileStorage:
                 for item in serialized_content.values():
                     class_name = item['__class__']
                     self.new(eval(class_name + "(**" + str(item) + ")"))
-            with open(self.__file_path, mode="r", encoding="UTF-8") as f:
-                new_obj_dict = json.load(f)
-                for key, value in new_obj_dict.items():
-                    class_name = value['__class__']
-                    new_instance = eval(class_name)(**value)
-                    self.__objects[key] = new_instance
         except FileNotFoundError:
             pass
