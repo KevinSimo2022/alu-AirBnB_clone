@@ -35,5 +35,8 @@ class BaseModel:
             if class_name == cls.__name__:
                 obj_dict['created_at'] = datetime.fromisoformat(obj_dict['created_at'])
                 obj_dict['updated_at'] = datetime.fromisoformat(obj_dict['updated_at'])
-                return cls(**obj_dict)
+                instance = cls()
+                for key, value in obj_dict.items():
+                    setattr(instance, key, value)
+                return instance
         raise ValueError("Invalid or mismatched class name in dictionary representation")
