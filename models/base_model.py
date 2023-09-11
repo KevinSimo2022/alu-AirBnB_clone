@@ -1,63 +1,67 @@
 #!/usr/bin/python3
-"""Defines BaseModel class."""
-import models
-from uuid import uuid4
-from datetime import datetime
+""" this is the base class for all models """
+import uuid
+from datetime import date, datetime, time
+from models import storage
 
 
 class BaseModel:
-    """
-        Class Base
-        Defines all common attributes/methods for other classes
-        Attr :
-                id: string - assigned with an uuid when an instance is created
-                created_at: datetime - assigned with the current datetime
-                when an instance is created
+    """class defining commom attributes
+    for other classes"""
 
-                updated_at: datetime - assigned with the current datetime
-                when an instance is created.
-                It will be updated every time the object change.
-    """
+    def __init__(self, *argv, **kwargs):
+        """ instance attributes
+        id : string
+        created_at: datetime
+        updated_at: datetime
 
-    def __init__(self, *args, **kwargs):
-        """Initialize new BaseModel."""
-
-        tform = "%Y-%m-%dT%H:%M:%S.%f"
-
-        self.id = str(uuid4())
+        getting arguments to recreate
+        BaseModel
+        creates new instance Model
+        """
+        self.id = str(uuid.uuid4())
         self.created_at = datetime.now()
-        self.updated_at = datetime.now()
+        self.updated_at = self.created_at
 
         if kwargs:
-            kwargs["created_at"] = datetime.strptime(
-                kwargs["created_at"], tform)
-            kwargs["updated_at"] = datetime.strptime(
-                kwargs["updated_at"], tform)
-            del kwargs["__class__"]
-            self.__dict__.update(kwargs)
+            for key, value in kwargs.items():
+                if key != '__class__':
+                    if key in ['created_at', 'updated_at']:
+                        temp_dict = self.__dict__
+                        temp_dict[key] = \
+                            datetime.strptime(value, "%Y-%m-%dT%H:%M:%S.%f")
+                    else:
+                        temp_dict = self.__dict__
+                        temp_dict[key] = value
+
         else:
-            self.id = str(uuid4())
+            self.id = str(uuid.uuid4())
             self.created_at = datetime.now()
-            self.updated_at = datetime.now()
-            models.storage.new(self)
-
-    def save(self):
-        """Set updated_at with current datetime."""
-        self.updated_at = datetime.now()
-        models.storage.save()
-
-    def to_dict(self):
-        """Return dictionary of BaseModel instance.
-
-        Includes key/value pair __class__.
-        """
-        rdict = self.__dict__.copy()
-        rdict["created_at"] = self.created_at.isoformat()
-        rdict["updated_at"] = self.updated_at.isoformat()
-        rdict["__class__"] = self.__class__.__name__
-        return rdict
+            self.updated_at = self.created_at
+            storage.new(self)
 
     def __str__(self):
-        """Return print/str representation of BaseModel instance."""
-        clname = self.__class__.__name__
-        return "[{}] ({}) {}".format(clname, self.id, self.__dict__)
+        """ default string output of class name \
+                ,id and dictionary files """
+        return '[{}] ({}) {}'\
+            .format(self.__class__.__name__, self.id, self.__dict__)
+
+    def save(self):
+        """
+        update of attribute updated_at
+        with latest time
+        updated_at: datetime
+        """
+        self.updated_at = datetime.now()
+        storage.save()
+
+    def to_dict(self):
+        """
+        get the objects of the instance
+        returns: dictionary
+        """
+        temp_dict = self.__dict__.copy()
+        temp_dict['__class__'] = self.__class__.__name__
+        temp_dict['created_at'] = temp_dict['created_at'].isoformat()
+        temp_dict['updated_at'] = temp_dict['updated_at'].isoformat()
+        return temp_dict
