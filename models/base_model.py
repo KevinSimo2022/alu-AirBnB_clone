@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 """Defines BaseModel class."""
 import models
-from uuid import uuid
+from uuid import uuid4
 from datetime import datetime
 
 
@@ -24,7 +24,7 @@ class BaseModel:
 
         tform = "%Y-%m-%dT%H:%M:%S.%f"
 
-        self.id = str(uuid.uuid4())
+        self.id = str(uuid4())
         self.created_at = datetime.now()
         self.updated_at = datetime.now()
 
