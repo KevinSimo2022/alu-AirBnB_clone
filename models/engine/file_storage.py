@@ -4,7 +4,7 @@ from os import path
 
 
 class FileStorage:
-    """ file storage class"""
+        """ file storage class"""
 
     __file_path = "file.json"
     __objects = {}
@@ -26,7 +26,7 @@ class FileStorage:
             json.dump(temp, out_file)
 
     def reload(self):
-    """ deserializes JSON from the file """
+        """ deserializes JSON from the file """
     from models.base_model import BaseModel
     from models.user import User
     from models.city import City
