@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-"""Some classes"""
+""" classes them """
 
 from ..base_model import BaseModel
 from ..amenity import Amenity
