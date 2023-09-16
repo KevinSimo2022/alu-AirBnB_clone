@@ -10,7 +10,7 @@ Environment
 This project is interpreted/tested on Ubuntu 20.04 using python3 (version 3.4.3) Editors used are Emacs, Vi. Some codes were aslo pushed from the Visual studio code IDE
 
 Installation
-Clone this repository: "https://github.com/Isaiah-Essien/alu-AirBnB_clone.git"
+Clone this repository: "https://github.com/KevinSimo2022/alu-AirBnB_clone.git"
 Access AirBnb directory: AirBnB_clone
 Run hbnb(interactively): ./console and enter command
 Run hbnb(non-interactively): echo "" | ./console.py
