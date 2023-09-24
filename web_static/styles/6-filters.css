@@ -1,0 +1,79 @@
+.filters {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid #DDDDDD;
+    border-radius: 4px;
+    margin-top: 30px;
+    position: relative; /* Add relative positioning for dropdowns */
+}
+
+.locations,
+.amenities {
+    width: 25%;
+    height: 100%;
+    padding: 10px;
+    position: inherit; /* Add relative positioning for dropdowns */
+}
+
+.locations {
+    border-right: 1px solid #DDDDDD;
+    margin-right: 10px;
+}
+
+.locations:last-child {
+    border-right: none; /* Remove border for the last filter */
+}
+
+h3 {
+    font-weight: 600;
+}
+
+h2 {
+    font-size: 16px; /* Font size for state names */
+}
+
+h4 {
+    font-weight: 400;
+    font-size: 14px;
+}
+
+.popover {
+    display: noe;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background-color: #FAFAFA;
+    border: 1px solid #DDDDDD;
+    border-radius: 4px;
+    list-style-type: none;
+    padding: 10px;
+    z-index: 1;
+}
+
+ul.popover ul {
+    margin-top: 5px; /* Add margin for nested dropdowns */
+}
+
+.locations:hover ul.popover,
+.amenities:hover ul.popover {
+    display: block; /* Display the dropdown on hover */
+}
+
+.search-button {
+    font-size: 18px;
+    background-color: #FF5A5F;
+    color: #FFFFFF;
+    height: 48px;
+    width: 20%;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-right: 10px;
+}
+
+.search-button:hover {
+    opacity: 0.9;
+}
+
